@@ -34,47 +34,24 @@ async function upload(filePath, context, octokit, url) {
         "content-type": mimeType
       }
     });
+    console.log(`Uploaded ${fileName}`);
   } catch (error) {
     core.setFailed(`Upload failed: ${error.message} ${JSON.stringify(error.errors)}`);
   }
-  console.log(`Uploaded ${fileName}`);
 }
 
 async function run() {
-  const token = core.getInput('github-token', {required: true});
-  const octokit = new github.GitHub(token);
+  const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
   const context = github.context;
 
   // Get the target URL
-  let url;
-  if (context.payload.release) {
-    url = context.payload.release.upload_url;
-  } else {
-    url = core.getInput('release-url', {required: false});
-  }
-  if(!url) {
-    core.warning("No release URL, skipping. This action requires either a release URL passed in or run as part of a release event");
-    return;
-  }
+  let url = core.getInput('upload_url', { required: true });
 
-  core.setOutput('url', url );
-
-  console.log(`Uploading release assets to: ${url}`)
+  console.log(`Uploading release assets`)
 
   var list = [];
 
-  // Add any single files
-  list = list.concat(core.getInput('file'));
-
-  // Get list of new-line-seperated files
-  if (core.getInput('files')) {
-    list = list.concat(core.getInput('files').split(/\r?\n/));
-  }
-
-  // Get glob pattern of files
-  if (core.getInput('pattern')) {
-    list = list.concat(glob.sync(core.getInput('pattern')));
-  }
+  list = list.concat(glob.sync(core.getInput('asset_files', { required: true })));
 
   // Clean up list by removing any non-truthy values
   list = list.filter(n => n);

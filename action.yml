@@ -1,24 +1,13 @@
 name: 'Release Asset'
 description: 'Upload files to a release'
 inputs:
-  file:
-    description: The file to upload
-    required: false
-  files:
-    description: A new line seperated list of files upload
-    required: false
-  pattern:
+  assert_files:
     description: Glob pattern of files to upload
-    required: false
-  github-token:
-    description: The GitHub token used to create an authenticated client
     required: true
-  release-url:
-    description: The url of the release files are uploaded to
-    required: false
+  upload_url:
+    description: 'The URL for uploading assets to the release'
+    required: true
 outputs:
-  url:
-    description: 'URL to the Release HTML Page'
 runs:
   using: 'node12'
   main: 'main.js'
