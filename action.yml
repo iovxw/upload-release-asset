@@ -7,7 +7,6 @@ inputs:
   upload_url:
     description: 'The URL for uploading assets to the release'
     required: true
-outputs:
 runs:
   using: 'node12'
   main: 'main.js'
